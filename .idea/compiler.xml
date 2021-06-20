@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="Assignment" />
+        <module name="JLox" />
+        <module name="orderprocessor" />
+        <module name="binarysearch" />
+        <module name="experiments" />
+      </profile>
+      <profile name="Annotation profile for jlox" enabled="true">
+        <sourceOutputDir name="../../target/generated-sources/annotations" />
+        <sourceTestOutputDir name="../../target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="jlox" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="assignment" target="1.8" />
+      <module name="cloudkitchens" target="1.8" />
+      <module name="confluent" target="1.8" />
+      <module name="incidents" target="1.8" />
+      <module name="route" target="1.8" />
+      <module name="turvo" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="confluent" options="-parameters" />
+      <module name="incidents" options="-parameters" />
+      <module name="orderprocessor" options="-parameters" />
+      <module name="route" options="-parameters" />
+      <module name="turvo" options="-parameters" />
+    </option>
+  </component>
+</project>
