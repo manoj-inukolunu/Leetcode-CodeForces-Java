@@ -5,16 +5,6 @@ import java.util.List;
 
 public class LC1902 {
 
-    class TreeNode {
-        int val;
-        TreeNode left;
-        TreeNode right;
-
-        public TreeNode(int val) {
-            this.val = val;
-        }
-    }
-
     //5,3,4,1,2,8,7,9,6
     //1,2,3,4,5,6,7,8,9
 
