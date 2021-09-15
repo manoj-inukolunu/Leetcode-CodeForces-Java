@@ -37,7 +37,7 @@ public class LC1611 {
     }
 
 
-    public int minimumOneBitOperations(int n) {
+    private int bfs(int n) {
         Queue<Pair> queue = new LinkedList<>();
         queue.add(new Pair(n, 0));
         HashSet<Pair> seen = new HashSet<>();
@@ -64,9 +64,22 @@ public class LC1611 {
         return (n ^ (1 << (k - 1)));
     }
 
+    public int minimumOneBitOperations(int n) {
+        if (n == 0 || n == 1) {
+            return n;
+        }
+        String str = Integer.toBinaryString(n);
+        int high = str.indexOf('1');
+        int nextHigh = str.indexOf('1', high + 1);
+        if (nextHigh == -1) {
+            return (1 << (str.length())) - 1;
+        }
+        return ((1 << (str.length())) - 1) - minimumOneBitOperations(Integer.parseInt(str.substring(nextHigh), 2));
+    }
+
     public static void main(String[] args) {
         LC1611 l = new LC1611();
-        System.out.println(Integer.toBinaryString((int) Math.pow(10, 9)));
+        System.out.println(l.minimumOneBitOperations((int) Math.pow(10, 9)));
     }
 }
 
