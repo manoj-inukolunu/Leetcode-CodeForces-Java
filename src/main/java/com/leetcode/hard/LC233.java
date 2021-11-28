@@ -11,24 +11,24 @@ public class LC233 {
             buffer.append("0");
             for (int numOnes = 1; numOnes <= buffer.length(); numOnes++) {
                 int[][][] dp = new int[buffer.length() + 1][2][numOnes + 1];
-                for (int[][] row : dp) {
-                    for (int[] r : row) {
-                        Arrays.fill(r, -1);
-                    }
-                }
+                fill(dp);
                 count += numOnes * (solve(buffer.toString(), 0, 1, numOnes, dp));
             }
         }
         for (int numOnes = 1; numOnes <= String.valueOf(n).length(); numOnes++) {
             int[][][] dp = new int[buffer.length() + 1][2][numOnes + 1];
-            for (int[][] row : dp) {
-                for (int[] r : row) {
-                    Arrays.fill(r, -1);
-                }
-            }
+            fill(dp);
             count += numOnes * (solve(String.valueOf(n), 0, 0, numOnes, dp));
         }
         return count;
+    }
+
+    private void fill(int[][][] dp) {
+        for (int[][] row : dp) {
+            for (int[] r : row) {
+                Arrays.fill(r, -1);
+            }
+        }
     }
 
     private int solve(String str, int idx, int isLess, int numOnes, int[][][] dp) {

@@ -5,39 +5,41 @@ import java.util.Arrays;
 
 public class LC1883 {
 
-    double totalDist = 0;
-
     public int minSkips(int[] dist, int speed, int hoursBefore) {
-        totalDist = Arrays.stream(dist).sum();
-        long val = solve(dist, 0, 0, 0, speed, hoursBefore);
-        return val >= Integer.MAX_VALUE ? -1 : (int) val;
+        double[][] dp = new double[dist.length + 2][dist.length + 2];
+        for (double[] row : dp) {
+            Arrays.fill(row, -1d);
+        }
+        for (int skips = 0; skips < dist.length; skips++) {
+            double val = solve(dist, 0, skips, speed, dp);
+            if (val <= hoursBefore) {
+                return skips;
+            }
+        }
+        return -1;
     }
 
-    private long solve(int[] dist, int idx, double timeWaited, double extra, int speed, double hoursBefore) {
+    private double solve(int[] dist, int idx, int skips, double speed, double[][] dp) {
         if (idx >= dist.length) {
-            double totalTime = (totalDist / speed) + timeWaited;
-            return totalTime > hoursBefore ? Integer.MAX_VALUE : 0;
+            return 0;
         }
-        long best;
-        double time = (double) dist[idx] / speed;
-        double decimal = (time - (int) time);
-        if (extra > 0) {
-            //wait
-            best = solve(dist, idx + 1, timeWaited + (1 - extra), decimal, speed, hoursBefore);
-            boolean shouldCarryOver = (time + extra) % 1 != 0;
-            double carryOver = (time + extra) - (int) (time + extra);
-            best = Math.min(best, 1 + solve(dist, idx + 1, timeWaited, shouldCarryOver ? (carryOver) : 0, speed,
-                    hoursBefore));
+        if (dp[idx][skips] != -1) {
+            return dp[idx][skips];
+        }
+        if (skips > 0) {
+            double best = (dist[idx] / speed) + solve(dist, idx + 1, skips - 1, speed, dp);
+            best = Math.min(best, Math.ceil(dist[idx] / speed + solve(dist, idx + 1, skips, speed, dp)));
+            return dp[idx][skips] = best;
         } else {
-            best = solve(dist, idx + 1, timeWaited, decimal, speed, hoursBefore);
+            double best = Math.ceil(dist[idx] / speed + solve(dist, idx + 1, skips, speed, dp));
+            return dp[idx][skips] = best;
         }
-        return best;
     }
 
     public static void main(String[] args) {
-        int[] dist = new int[]{1, 3, 2};
-        int speed = 4;
-        int hoursBefore = 2;
+        int[] dist = new int[]{7, 3, 5, 5};
+        int speed = 1;
+        int hoursBefore = 10;
         LC1883 l = new LC1883();
         System.out.println(l.minSkips(dist, speed, hoursBefore));
     }
