@@ -7,16 +7,12 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="Assignment" />
-        <module name="JLox" />
         <module name="orderprocessor" />
         <module name="binarysearch" />
         <module name="experiments" />
-      </profile>
-      <profile name="Annotation profile for jlox" enabled="true">
-        <sourceOutputDir name="../../target/generated-sources/annotations" />
-        <sourceTestOutputDir name="../../target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
+        <module name="JLox" />
         <module name="jlox" />
+        <module name="lc-cf-java" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

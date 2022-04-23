@@ -1,103 +1,134 @@
 package com.leetcode.hard;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Set;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 public class LC1900 {
 
     public int[] earliestAndLatest(int n, int firstPlayer, int secondPlayer) {
-        StringBuffer state = new StringBuffer();
-        int tn = n;
-        for (char ch = 'A'; ch <= 'Z'; ch++) {
-            if (tn > 0) {
-                state.append(ch);
-                tn--;
-            }
+        List<Integer> list = new ArrayList<>();
+        for (int i = 1; i <= n; i++) {
+            list.add(i);
         }
-        for (char ch = 'a'; ch <= 'z'; ch++) {
-            if (tn > 0) {
-                state.append(ch);
-                tn--;
-            }
-        }
-        int min = solve(state.toString(), state.charAt(firstPlayer - 1), state.charAt(secondPlayer - 1));
-        int max = solveM(state.toString(), state.charAt(firstPlayer - 1), state.charAt(secondPlayer - 1));
-        return new int[]{min, max};
+        int min = solveMin(list, firstPlayer, secondPlayer);
+        map.clear();
+        int max = solveMax(list, firstPlayer, secondPlayer);
+        return new int[]{min + 1, max + 1};
     }
 
-    private int solveM(String currState, char first, char second) {
-        if (compete(currState, first, second)) {
+    HashMap<String, Integer> map = new HashMap<>();
+
+    private int solveMin(List<Integer> list, int firstPlayer, int secondPlayer) {
+        if (isGameOver(list, firstPlayer, secondPlayer)) {
             return 0;
         }
-        StringBuffer curr = new StringBuffer(currState);
-        Set<String> nextSet = new HashSet<>();
-        if (currState.length() % 2 != 0) {
-            char mid = curr.charAt(currState.length() / 2);
-            curr.deleteCharAt(currState.length() / 2);
-            StringBuffer buffer = new StringBuffer();
-            buffer.append(mid);
-            nextStates(curr, buffer, 0, nextSet);
-        } else {
-            nextStates(curr, new StringBuffer(), 0, nextSet);
+        if (map.containsKey(list.toString())) {
+            return map.get(list.toString());
         }
-        int best = Integer.MIN_VALUE / 2;
-        for (String state : nextSet) {
-            best = Math.max(best, 1 + solve(state, first, second));
-        }
-        return best;
-    }
-
-    private int solve(String currState, char first, char second) {
-        if (compete(currState, first, second)) {
+        int minRound = Integer.MAX_VALUE / 2;
+        AllStatesGenerator generator = new AllStatesGenerator();
+        generator.allStates(list, 0, list.size() - 1, firstPlayer, secondPlayer, new ArrayList<>());
+        List<List<Integer>> states = generator.total;
+        if (generator.gameOver) {
             return 0;
         }
-        StringBuffer curr = new StringBuffer(currState);
-        Set<String> nextSet = new HashSet<>();
-        if (currState.length() % 2 != 0) {
-            char mid = curr.charAt(currState.length() / 2);
-            curr.deleteCharAt(currState.length() / 2);
-            StringBuffer buffer = new StringBuffer();
-            buffer.append(mid);
-            nextStates(curr, buffer, 0, nextSet);
-        } else {
-            nextStates(curr, new StringBuffer(), 0, nextSet);
+        for (List<Integer> state : states) {
+            List<Integer> l = new ArrayList<>(state);
+            Collections.sort(l);
+            minRound = Math.min(minRound, 1 + solveMin(l, firstPlayer, secondPlayer));
         }
-        int best = Integer.MAX_VALUE / 2;
-        for (String state : nextSet) {
-            best = Math.min(best, 1 + solve(state, first, second));
-        }
-        return best;
+        map.put(list.toString(), minRound);
+        return minRound;
     }
 
-    private boolean compete(String state, char first, char second) {
-        for (int i = 0; i < state.length() / 2; i++) {
-            if (state.charAt(i) == first && state.charAt(state.length() - i - 1) == second) {
+    private int solveMax(List<Integer> list, int firstPlayer, int secondPlayer) {
+        if (isGameOver(list, firstPlayer, secondPlayer)) {
+            return 0;
+        }
+        if (map.containsKey(list.toString())) {
+            return map.get(list.toString());
+        }
+        int maxRound = Integer.MIN_VALUE / 2;
+        AllStatesGenerator generator = new AllStatesGenerator();
+        generator.allStates(list, 0, list.size() - 1, firstPlayer, secondPlayer, new ArrayList<>());
+        List<List<Integer>> states = generator.total;
+        if (generator.gameOver) {
+            return 0;
+        }
+        for (List<Integer> state : states) {
+            List<Integer> l = new ArrayList<>(state);
+            Collections.sort(l);
+            maxRound = Math.max(maxRound, 1 + solveMax(l, firstPlayer, secondPlayer));
+        }
+        map.put(list.toString(), maxRound);
+        return maxRound;
+    }
+
+    private boolean isGameOver(List<Integer> list, int firstPlayer, int secondPlayer) {
+        int start = 0, end = list.size() - 1;
+        while (start <= end) {
+            if (list.get(start) == firstPlayer && list.get(end) == secondPlayer) {
                 return true;
             }
+            start++;
+            end--;
         }
         return false;
     }
 
-    private void nextStates(StringBuffer curr, StringBuffer hold, int idx, Set<String> set) {
-        if (hold.length() == 0 || hold.length() == 1) {
-            return;
+    static class AllStatesGenerator {
+        List<List<Integer>> total = new ArrayList<>();
+        boolean gameOver = false;
+
+        boolean isFirstOrSecond(int p1, int p2, int first, int second) {
+            return p1 == first || p1 == second || p2 == first || p2 == second;
         }
-        Queue<String> queue = new LinkedList<>();
-        queue.add(hold.toString());
-        while (!queue.isEmpty()) {
-            String b = queue.poll();
-            if (idx > curr.length() / 2) {
-                set.add(b);
+
+        private int winner(int p1, int p2, int first, int second) {
+            if (p1 == first || p1 == second) {
+                return p1;
+            }
+            return p2;
+        }
+
+        private void allStates(List<Integer> list, int start, int end, int first, int second,
+                               List<Integer> curr) {
+            if (list.size() % 2 == 0 && start > end) {
+                total.add(new ArrayList<>(curr));
+                return;
+            }
+            if (list.size() % 2 != 0 && start == end) {
+                curr.add(list.get(start));
+                total.add(new ArrayList<>(curr));
+                return;
+            }
+            if (start > end) {
+                return;
+            }
+            int player1 = list.get(start);
+            int player2 = list.get(end);
+            if ((player1 == first && player2 == second) || (player1 == second && player2 == first)) {
+                gameOver = true;
+                return;
+            }
+            if (isFirstOrSecond(player1, player2, first, second)) {
+                List<Integer> next = new ArrayList<>(curr);
+                next.add(winner(player1, player2, first, second));
+                allStates(list, start + 1, end - 1, first, second, next);
             } else {
-                queue.add(b + curr.charAt(idx));
-                queue.add(b + curr.charAt(curr.length() - 1 - idx));
-                idx++;
+                List<Integer> startList = new ArrayList<>(curr);
+                startList.add(list.get(start));
+                allStates(list, start + 1, end - 1, first, second, startList);
+                List<Integer> endList = new ArrayList<>(curr);
+                endList.add(list.get(end));
+                allStates(list, start + 1, end - 1, first, second, endList);
             }
         }
     }
+
 
     public static void main(String[] args) {
         LC1900 l = new LC1900();

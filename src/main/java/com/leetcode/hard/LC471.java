@@ -1,49 +1,76 @@
 package com.leetcode.hard;
 
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 public class LC471 {
 
-  class Pair {
+    HashMap<String, String> dp = new HashMap<>();
 
-    int count;
-    String str;
-
-    public Pair(int count, String str) {
-      this.count = count;
-      this.str = str;
+    public String encode(String str) {
+        if (str.length() <= 4) {
+            return str;
+        }
+        if (dp.containsKey(str)) {
+            return dp.get(str);
+        }
+        String best = str;
+        int strLen = str.length();
+        for (int len = 1; len <= strLen / 2; len++) {
+            String subStr = str.substring(0, len);
+            if (strLen % len == 0 && str.replaceAll(subStr, "").isEmpty()) {
+                String currBest = strLen / len + "[" + encode(subStr) + "]";
+                if (currBest.length() < best.length()) {
+                    best = currBest;
+                }
+            }
+        }
+        for (int i = 0; i + 1 < str.length(); i++) {
+            String left = encode(str.substring(0, i + 1));
+            String right = encode(str.substring(i + 1));
+            if ((left + right).length() < best.length()) {
+                best = (left + right);
+            }
+        }
+        dp.put(str, best);
+        return best;
     }
-  }
 
-  public String encode(String s) {
-    List<Pair> list = dfs(s, 0, s.length() - 1);
-    return "";
-  }
-
-  private List<Pair> dfs(String str, int start, int end) {
-    if (start == end) {
-      Pair p = new Pair(1, str.charAt(start) + "");
-      List<Pair> list = new ArrayList<>();
-      list.add(p);
-      return list;
+    public int numDecodings(String s) {
+        if (s.charAt(0) == '0') {
+            return 0;
+        }
+        int[] dp = new int[s.length()];
+        dp[0] = 1;
+        for (int i = 1; i < s.length(); i++) {
+            char curr = s.charAt(i);
+            char prev = s.charAt(i - 1);
+            int last = Character.getNumericValue(prev) * 10 + Character.getNumericValue(curr);
+            if (last == 0) {
+                return 0;
+            }
+            if (curr == '0' && prev > '2') {
+                return 0;
+            } else {
+                int var = i - 2 >= 0 ? dp[i - 2] : 1;
+                if (curr == '0') {
+                    dp[i] = var;
+                } else {
+                    dp[i] = dp[i - 1];
+                    if (last <= 26 && prev != '0') {
+                        dp[i] += var;
+                    }
+                }
+            }
+        }
+        return dp[s.length() - 1];
     }
-    if (start > end) {
-      return new ArrayList<>();
-    }
-    List<Pair> ret = new ArrayList<>();
-    for (int i = start; i <= end; i++) {
-      List<Pair> left = dfs(str, start, i);
-      List<Pair> right = dfs(str, i + 1, end);
 
-    }
-    return ret;
-  }
 
-  public static void main(String[] args) {
-    LC471 l = new LC471();
-  }
+    public static void main(String[] args) {
+        LC471 l = new LC471();
+        System.out.println(l.numDecodings("2206"));
+    }
 }
 
 

@@ -24,8 +24,14 @@ public class LC2009 {
             int max = nums.length - 1 + min;
             Integer key = map.floorKey(max);
             int idx = map.get(key);
-            count = Math.min(count, nums.length - idx - i);
+            int numElements = idx - i + 1;
+            count = Math.min(count, nums.length - numElements);
         }
         return count;
+    }
+
+    public static void main(String[] args) {
+        LC2009 l = new LC2009();
+        System.out.println(l.minOperations(new int[]{1, 10, 100, 1000}));
     }
 }

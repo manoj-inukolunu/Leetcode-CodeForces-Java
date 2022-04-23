@@ -73,19 +73,19 @@ public class AVLTree {
       node.right = insert(node.right, value);
     }
 
-    // Update balance factor and height values.
+    // Update balance factor and traverse values.
     update(node);
 
     // Re-balance tree.
     return balance(node);
   }
 
-  // Update a node's height and balance factor.
+  // Update a node's traverse and balance factor.
   private void update(Node node) {
     int leftNodeHeight = (node.left == null) ? -1 : node.left.height;
     int rightNodeHeight = (node.right == null) ? -1 : node.right.height;
 
-    // Update this node's height.
+    // Update this node's traverse.
     node.height = 1 + Math.max(leftNodeHeight, rightNodeHeight);
 
     // Update balance factor.

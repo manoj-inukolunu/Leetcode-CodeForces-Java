@@ -33,7 +33,7 @@ public class RussianDollEnvelopes {
     public String toString() {
       final StringBuilder sb = new StringBuilder("Envelope{");
       sb.append("width=").append(width);
-      sb.append(", height=").append(height);
+      sb.append(", traverse=").append(height);
       sb.append('}');
       return sb.toString();
     }

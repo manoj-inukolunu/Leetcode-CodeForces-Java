@@ -2,6 +2,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -11,6 +13,11 @@ import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class CKingsPath {
+
+  public String customSortString(String order, String s) {
+    char[] arr = order.toCharArray();
+    return new String(arr);
+  }
 
   static class FastScanner {
 
@@ -28,11 +35,9 @@ public class CKingsPath {
       return st.nextToken();
     }
 
-
     int nextInt() {
       return Integer.parseInt(next());
     }
-
 
     int[] readArray(int n) {
       int[] a = new int[n];
@@ -89,7 +94,7 @@ public class CKingsPath {
     while (numTest-- > 0) {
       int vR = f.nextInt();
       List<Integer[]> vList = valid.getOrDefault(vR, new ArrayList<>());
-      vList.add(new Integer[]{f.nextInt(), f.nextInt()});
+      vList.add(new Integer[] {f.nextInt(), f.nextInt()});
       valid.put(vR, vList);
     }
     Queue<Pair> queue = new LinkedList<>();
@@ -103,7 +108,8 @@ public class CKingsPath {
       }
       if (!visited.contains(curr)) {
         visited.add(curr);
-        int[][] dirs = new int[][]{{-1, 0}, {1, 0}, {0, 1}, {0, -1}, {-1, -1}, {1, -1}, {-1, 1}, {1, 1}};
+        int[][] dirs =
+            new int[][] {{-1, 0}, {1, 0}, {0, 1}, {0, -1}, {-1, -1}, {1, -1}, {-1, 1}, {1, 1}};
         for (int[] dir : dirs) {
           int nX = curr.row + dir[0];
           int nY = curr.col + dir[1];
@@ -126,5 +132,4 @@ public class CKingsPath {
     }
     return false;
   }
-
 }
